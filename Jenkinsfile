@@ -13,7 +13,6 @@ pipeline {
 
 		// ArgoCD Config Repo
 		// set this as an ENV_VAR on Jenkins to make this easier?
-        // ARGOCD_CONFIG_REPO = "github.com/petbattle/ubiquitous-journey.git"
 
 
 		// Credentials bound in OpenShift
@@ -55,7 +54,6 @@ pipeline {
 							env.QUAY_PUSH_SECRET = "petbattle-jenkinspb-pull-secret"
 							env.IMAGE_NAMESPACE = env.QUAY_ACCOUNT != null ? "${QUAY_ACCOUNT}" : "petbattle"
 							env.IMAGE_REPOSITORY = "quay.io"
-              env.ARGOCD_CONFIG_REPO = "${ARGOCD_CONFIG_REPO}"
 						}
             sh 'printenv'
 					}
@@ -105,7 +103,7 @@ pipeline {
 					# if not just use the internal registry
 
 						echo "🏗 Creating a sandbox build for inside the cluster 🏗"
-						oc new-build --binary --name=${APP_NAME} -l app=${APP_NAME} ${BUILD_ARGS} --strategy=docker
+						oc new-build --binary --name=${APP_NAME} -l app=${APP_NAME} ${BUILD_ARGS} --strategy=docker || rc=$?
 						oc start-build ${APP_NAME} --from-dir=. ${BUILD_ARGS} --follow --wait
 						# used for internal sandbox build ....
 						oc tag ${OPENSHIFT_BUILD_NAMESPACE}/${APP_NAME}:latest ${DESTINATION_NAMESPACE}/${APP_NAME}:${VERSION}

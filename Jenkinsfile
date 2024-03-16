@@ -104,7 +104,9 @@ pipeline {
 
 						echo "🏗 Creating a sandbox build for inside the cluster 🏗"
 						oc new-build --binary --name=${APP_NAME} -l app=${APP_NAME} ${BUILD_ARGS} --strategy=docker || rc=$?
-						oc start-build ${APP_NAME} --from-dir=. ${BUILD_ARGS} --follow --wait
+						ls -l 
+                        cd devfile-sample-python-basic
+                        oc start-build ${APP_NAME} --from-dir=. ${BUILD_ARGS} --follow --wait
 						# used for internal sandbox build ....
 						oc tag ${OPENSHIFT_BUILD_NAMESPACE}/${APP_NAME}:latest ${DESTINATION_NAMESPACE}/${APP_NAME}:${VERSION}
 				'''
